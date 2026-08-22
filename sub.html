@@ -5,10 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <meta name="color-scheme" content="dark light">
-<title>swgSubscription</title>
-<!-- Rewritten per request by swg-sub in the language the admin set as the subscriptions default
-     (subs.languages.default). Deliberately says nothing about who the page belongs to: the URL carries a
-     token, so anywhere a link is pasted, the preview must describe the page and never its holder. -->
+<title>Subscriptions</title>
 <meta name="description" content="Your VPN access — the configs and QR codes for your devices, in one place.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Your VPN access">
@@ -23,18 +20,14 @@
   <button class="ctl" id="theme-btn" type="button" aria-label="Theme"></button>
 </div>
 <header class="bar">
-  <span class="brand"><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">swg<span>Sub</span></span></span>
+  <span class="brand"><span class="brand-mark" aria-hidden="true"></span>Subscriptions</span></span></span>
   <span class="who" id="who"></span>
 </header>
 <main id="app">
   <div class="state" id="state"><div class="spin" aria-hidden="true"></div><p>Loading…</p></div>
   <div id="peers" hidden></div>
 </main>
-<!-- Asset URLs are RELATIVE (no leading /) so the page works whether swg-sub is at the domain root or behind a
-     reverse-proxy subpath (e.g. /swgsub/) — the browser resolves them against the served path. -->
-<!-- qrcode is a UMD lib: load as a classic script so it sets the global `qrcode`. -->
 <script src="_a/qrcode.js"></script>
-<!-- shared turn-proxy client-config builders (window.SWGTurn) — same file the admin app uses. -->
 <script src="_a/turn-artifacts.js"></script>
 <script src="_a/sub.js"></script>
 </body>
