@@ -2137,22 +2137,12 @@
       stage.style.alignItems = "flex-start";
       if (isTextwrap) content.style.maxHeight = "";                              // the wrap is natural height; only the config is capped
       var configCap = Math.max(48, barTop - fixedH - GAP_MIN * nGaps);
-      if (isQRbox) {
-        // The QR is viewport-sized (min(..vw,..vh)) and won't shrink for an extra line (get-app / VK) or the taller
-        // Start bar — so cap it to the room left, keeping it square + scannable (floor 140px). Only bites when tight.
-        var imgEl = configEl.querySelector && configEl.querySelector(".qrimg");
-        if (imgEl) {
-          var pad = 2 * (parseFloat(getComputedStyle(configEl).paddingTop) || 12);   // qrbox top+bottom padding
-          // shrink to the room left (never overlap the bar); floor 96px — the inline QR is a preview, tap-to-enlarge scans.
-          var maxDim = Math.max(96, configCap - pad);
-          imgEl.style.maxWidth = maxDim + "px"; imgEl.style.maxHeight = maxDim + "px";
-        }
-      } else if (configEl.classList && configEl.classList.contains("cfgtext")) {
+      if (!isQRbox && configEl.classList && configEl.classList.contains("cfgtext")) {
         configEl.style.maxHeight = configCap + "px";
         fitText(configEl);
         if (configEl.style.fontSize && ctrls[curIdx]) ctrls[curIdx].cfgFont = configEl.style.fontSize;   // QR view's command matches
       }
-      var configH = Math.min(configEl.offsetHeight, configCap);
+      var configH = isQRbox ? configEl.offsetHeight : Math.min(configEl.offsetHeight, configCap);
       var G = Math.max(GAP_MIN, Math.floor((barTop - fixedH - configH) / nGaps));   // the one gap that makes ALL lines equal
 
       // walk the stack top→bottom, giving every line the same gap G
