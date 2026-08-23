@@ -149,13 +149,13 @@ body.logo-inline .brand { align-self: flex-start; min-height: 41px; }
 .pdot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); transition: background .15s, transform .15s; cursor: pointer; }
 .pdot.on { background: var(--brand); transform: scale(1.4); }
 
-/* horizontal swipe row of a peer's servers */
-/* touch-action must allow BOTH axes: the row covers nearly the whole screen, so `pan-x` alone left a
-   vertical drag over the card with nowhere to go (it was the reason up/down needed a JS takeover). The
-   row itself can't scroll vertically (overflow-y: hidden), so a pan-y drag chains straight to the pager
-   and pages one peer — same native scroll-snap that makes left/right feel instant. */
+/* Horizontal swipe row of a peer's servers. Desktop keeps it clipped vertically; touch/mobile gets overflow-y
+   auto below, so a card scrolls only when its content is taller than the available row. */
 .srow { flex: 1; min-height: 0; display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y; }
 .srow::-webkit-scrollbar { display: none; }
+@media (max-width: 767px), (hover: none) and (pointer: coarse) {
+  .ppage .srow { overflow-y: auto; overscroll-behavior-y: contain; }
+}
 .scell { position: relative; flex: 0 0 100%; min-width: 0; scroll-snap-align: center; scroll-snap-stop: always; display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 0 16px 6px; }
 
 /* the node label + protocol / fork tags — positioned by JS (top set live), centred horizontally */
@@ -428,16 +428,16 @@ body.logo-inline .brand { align-self: flex-start; min-height: 41px; }
 /* the stage — QR or config, centred and capped so it never looks oversized on a tablet */
 .scell-stage { flex: 1; min-height: 0; width: 100%; max-width: 560px; display: flex; align-items: center; justify-content: center; }
 
-/* big centred QR — fills most of a phone's width; ceilings keep it sane on tablets/desktop */
-/* White box that hugs a plain square QR image. The IMAGE carries the size (width, height:auto → square via
-   its 1:1 intrinsic) and `margin:0 auto` centres it — a simple, WebKit-safe centre (no aspect-ratio/object-fit
-   on a flex item, which Safari can compute non-square and off-centre). Height fit on short viewports comes
-   from the `vh` caps below + the max-height media tiers, not from an auto-fitting box. */
-.qrbox { align-self: center; margin: 0 auto; background: #fff; padding: clamp(9px, 2.6vw, 14px); border-radius: 16px; line-height: 0; box-shadow: 0 6px 22px rgba(0, 0, 0, .18); max-width: 100%; cursor: zoom-in; transition: box-shadow .15s; }
+/* Fixed 216px QR card, capped by the visitor's viewport width so it never causes horizontal overflow. */
+.qrbox { --qrbox-size: min(216px, calc(100vw - 32px)); align-self: center; width: var(--qrbox-size); height: var(--qrbox-size);
+  margin: 0 auto; display: grid; place-items: center; background: #fff; padding: clamp(9px, 2.6vw, 14px);
+  border-radius: 16px; line-height: 0; box-shadow: 0 6px 22px rgba(0, 0, 0, .18); max-width: 100%;
+  cursor: zoom-in; transition: box-shadow .15s; }
 /* INSET ring (inside the white padding) so the parent's overflow can't clip its top, unlike an outer ring */
 .qrbox:hover { box-shadow: inset 0 0 0 3px var(--brand), 0 6px 22px rgba(0, 0, 0, .18); }
 .qrbox:active { transform: scale(.99); }
 .qrimg { display: block; margin: 0 auto; width: min(90vw, 55vh, 500px); height: auto; image-rendering: pixelated; }
+.qrbox .qrimg { width: 100%; height: 100%; object-fit: contain; }
 
 /* Fullscreen QR viewer — tap the QR to enlarge it for scanning; tap anywhere / Esc to close. */
 .qz-overlay { position: fixed; inset: 0; z-index: 60; background: rgba(4, 8, 6, .82); backdrop-filter: blur(4px);

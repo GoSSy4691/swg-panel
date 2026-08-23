@@ -2350,8 +2350,14 @@
     };
 
     function current() { var sl = srow.scrollLeft, best = 0, bd = Infinity; for (var i = 0; i < srow.children.length; i++) { var dd = Math.abs((srow.children[i].offsetLeft - srow.offsetLeft) - sl); if (dd < bd) { bd = dd; best = i; } } return best; }
-    var raf = 0;
-    srow.addEventListener("scroll", function () { if (raf) return; raf = requestAnimationFrame(function () { raf = 0; var i = current(); if (i !== curIdx) { curIdx = i; syncBar(); } else syncVHints(); }); }, { passive: true });
+    var raf = 0, lastSL = srow.scrollLeft;
+    srow.addEventListener("scroll", function () { if (raf) return; raf = requestAnimationFrame(function () {
+      raf = 0;
+      var sl = srow.scrollLeft;
+      if (Math.abs(sl - lastSL) < 0.5) return;   // mobile vertical overflow must not trigger horizontal relayout
+      lastSL = sl;
+      var i = current(); if (i !== curIdx) { curIdx = i; syncBar(); } else syncVHints();
+    }); }, { passive: true });
     dotEls.forEach(function (d, i) { d.onclick = function () { srow.scrollTo({ left: srow.children[i].offsetLeft - srow.offsetLeft, behavior: "smooth" }); }; });
     if (sL && sR) {   // the edge arrows are clickable nav buttons (used in the landscape/desktop layout; harmless in portrait)
       var goCell = function (dir) { var i = current(), j = Math.max(0, Math.min(i + dir, srow.children.length - 1));
