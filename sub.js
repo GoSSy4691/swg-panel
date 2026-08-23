@@ -614,8 +614,7 @@
     }, { passive: true });
   }
 
-  // ── The desktop "Connections" button rides with the USERNAME ─────────────────────────────────────────
-  // Touch/mobile uses the per-page button; a mouse/desktop gets this single header copy instead.
+  // ── The single "Connections" button rides with the USERNAME on desktop and mobile ────────────────────
   function headerSwitch(onOpen) {
     var who = document.getElementById("who"); if (!who) return null;
     var row = (who.parentNode && who.parentNode.classList && who.parentNode.classList.contains("who-row"))
@@ -625,7 +624,7 @@
     if (!slot) { slot = el("span", "who-switch"); row.appendChild(slot); }
     slot.textContent = "";                                   // a rebuild (lang/theme) re-makes the button
     if (!onOpen) return null;
-    var b = el("button", "pswitch pswitch-head", t("connections")); b.type = "button";
+    var b = el("button", "pswitch", t("connections")); b.type = "button";
     b.setAttribute("aria-label", t("pickOpen"));
     b.onclick = onOpen; slot.appendChild(b);
     return b;
@@ -1985,13 +1984,8 @@
     box.appendChild(el("p", "state-word", expired ? t("subExpiredWord") : t("subBlockedWord")));
     box.appendChild(el("p", "state-sub", expired ? t("subExpiredSub") : t("subDisabledSub")));
     stage.appendChild(box); cell.appendChild(stage); srow.appendChild(cell); page.appendChild(srow);
-    // up/down peer-nav hints so the carousel still walks past this page (render hides the ends)
+    // Legacy vertical-hint nodes remain hidden for layout consistency.
     page.appendChild(hint("vhint vhint-u", "u")); page.appendChild(hint("vhint vhint-d", "d"));
-    // Same Switch button as a live page — this page runs no layout pass, so it sits on the chevron line by its
-    // CSS default. Landing here is a dead end otherwise: there's no config to act on, only somewhere else to go.
-    var switchEl = el("button", "pswitch", t("connections")); switchEl.type = "button"; switchEl.hidden = true;
-    switchEl.setAttribute("data-pick", "");
-    page.appendChild(switchEl);
     // A blocked/expired device still gets a picker entry — reaching it is how the holder finds out WHY that
     // one config stopped working. Its "badge" is the state word, in place of a protocol tag.
     page._pick = { row: row, dead: true, title: peer.title || t("peer"),
@@ -2041,12 +2035,6 @@
     titleEl.appendChild(nameEl); titleEl.appendChild(srvEl);
     titleEl.setAttribute("data-pick", "");   // the device name doubles as the jump picker's trigger (render wires it)
     head.appendChild(titleEl);
-    // The picker's LABELLED entry point, on the same line as the down-chevron and hard against the right edge.
-    // syncVHints places it on that line whether or not the chevron itself is shown, so it never moves between
-    // pages. Hidden by render when there's nothing to pick.
-    var switchEl = el("button", "pswitch", t("connections")); switchEl.type = "button"; switchEl.hidden = true;
-    switchEl.setAttribute("data-pick", "");
-    page.appendChild(switchEl);
     // deployment nav row (only when >1 deployment): the dots flanked by left/right hint arrows — the LEFT/RIGHT
     // SWIPE walks the deployments; the arrows are graphical hints (non-interactive), each fading at its end.
     var dotEls = [], sL, sR;
@@ -2130,11 +2118,7 @@
       var vkH = hasVk ? vk.offsetHeight : 0;
       var cmdH = cmdEl ? cmdEl.offsetHeight : 0, hasCmd = cmdH > 0;
       var uShown = getComputedStyle(vUp).display !== "none", dShown = getComputedStyle(vDown).display !== "none";
-      // The bottom line is OCCUPIED whenever the chevron OR the Switch button is on it. Reserving it either way
-      // is what keeps Switch (and everything stacked above it) at the same y on every page — the last page draws
-      // no chevron, and without this the whole column redistributed and the button slid ~74px down.
-      var switchShown = !switchEl.hidden && getComputedStyle(switchEl).display !== "none";
-      var dLineShown = dShown || switchShown;
+      var dLineShown = dShown;
       var barTop = bar.getBoundingClientRect().top - pr.top;
       var GAP_MIN = 8;
 
@@ -2174,8 +2158,6 @@
       y += G; configTop = y; y += configH;
       if (hasCmd) y += G + cmdH;
       boxBottom = y;
-      // The chevron LINE exists whether or not the chevron is drawn on it (the last page has no "down"), so the
-      // Switch button gets its own unconditional y — otherwise it would jump on the one page that hides the arrow.
       var dLine = boxBottom + G;
       if (dShown) { y += G; downTop = y; }
 
@@ -2193,10 +2175,6 @@
       var cr2 = configEl.getBoundingClientRect();
       var aCx = Math.round((cr2.left + cr2.right) / 2 - pr.left);
       vUp.style.left = aCx + "px"; vDown.style.left = aCx + "px";
-      // "Connections" sits ON the chevron's line (same y on every page — dLine is computed above whether or not
-      // the chevron is drawn), right-aligned to the same 12px inset as the header controls above it.
-      switchEl.style.top = Math.round(dLine + dH / 2) + "px";
-      switchEl.style.left = ""; switchEl.style.right = ""; switchEl.style.bottom = "";
       if (sL && sR) {
         var topRef = uShown ? (upTop + uH) : 0, botRef = dLineShown ? dLine : boxBottom;
         var midY = Math.round((topRef + botRef) / 2 + (botRef - topRef) * 0.1);   // a touch below centre
@@ -2523,15 +2501,13 @@
         var pg = pages[activePage];
         return { pi: activePage, ci: ((pg && pg._pos) ? pg._pos() : { cell: 0 }).cell };
       }
-      // Every page carries two triggers for the picker: the device NAME (the thing you'd instinctively tap) and
-      // the labelled "Switch" button on the chevron line (the thing you'd look for). Both are offered only when
-      // there IS something to pick — a subscription with a single config needs no index.
+      // The header button is the labelled picker entry point; device names remain shortcuts into the same picker.
+      // Neither is interactive when this subscription has only one config.
       var openPicker = function () { openConfigPicker(pickPeers, curPick(), jumpTo); };
-      headerSwitch(pickTotal > 1 ? openPicker : null);   // desktop copy; CSS hides it on touch/mobile
+      headerSwitch(pickTotal > 1 ? openPicker : null);   // one header button on desktop and mobile
       if (pickTotal > 1) {
         pages.forEach(function (pg) {
           Array.prototype.forEach.call(pg.querySelectorAll("[data-pick]"), function (trg) {
-            if (trg.tagName === "BUTTON") { trg.hidden = false; trg.onclick = openPicker; return; }
             trg.classList.add("pickable");                       // plain text → give it a button's semantics
             trg.setAttribute("role", "button");
             trg.setAttribute("tabindex", "0");

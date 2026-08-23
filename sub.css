@@ -67,9 +67,10 @@ body.logo-inline .brand { align-self: flex-start; min-height: 41px; }
 .brand-name span { color: var(--ink-2); font-weight: 600; }
 .who { color: var(--ink); font-weight: 700; font-size: clamp(17px, 5vw, 21px); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .who:empty { display: none; }
-/* The username and its desktop "Connections" button. Touch/mobile keeps a button per page. */
-.who-row { display: flex; align-items: center; justify-content: center; width: 100%; max-width: 100%; }
+/* The username and its single Connections button, shared by desktop and mobile. */
+.who-row { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; width: 100%; max-width: 100%; }
 .who-switch { display: flex; align-items: center; }
+.who-switch:empty { display: none; }
 
 /* top-right controls: language (EN/RU) + light/dark — solid, high-contrast, comfortable tap targets */
 .topctl { position: fixed; top: calc(10px + env(safe-area-inset-top)); right: 12px; z-index: 30; display: flex; gap: 8px; }
@@ -115,7 +116,7 @@ body.logo-inline .brand { align-self: flex-start; min-height: 41px; }
 #peers { flex: 1; min-height: 0; display: flex; flex-direction: column; }
 #peers[hidden] { display: none; }
 
-/* The protocol modebar is retired: Connections (.pswitch) is the single entry point on mobile. */
+/* The protocol modebar is retired: Connections (.pswitch) is the single entry point on every screen. */
 .modebar { display: none; }
 .modetab { flex: none; appearance: none; width: 62px; height: 62px; padding: 11px; border-radius: 16px; cursor: pointer;
   border: 1px solid var(--line); background: var(--panel-2); transition: border-color .18s, box-shadow .18s, transform .1s; }
@@ -327,18 +328,16 @@ body.logo-inline .brand { align-self: flex-start; min-height: 41px; }
   .ppage-title.pickable:hover, .peer-dead-name.pickable:hover { color: var(--brand); }
 }
 
-/* "Connections" — the picker's labelled entry point. It uses the former protocol control treatment (panel
-   fill, brand border + ring). syncVHints puts it on the
-   chevron's line, right-aligned to the same 12px inset as the header controls, at the same y on every page. */
-.pswitch { position: absolute; top: calc(50% + 133px); right: 12px; z-index: 5; transform: translateY(-50%);
-  display: inline-flex; align-items: center; justify-content: center; padding: 8px 14px; border-radius: 12px;
+/* "Connections" — the picker's labelled entry point under the username. It uses the former protocol control
+   treatment (panel fill, brand border + ring) and occupies the same .who-switch slot on desktop and mobile. */
+.pswitch { position: static; z-index: 5; display: inline-flex; align-items: center; justify-content: center;
+  padding: 6px 12px; border-radius: 12px;
   background: var(--panel); border: 1.5px solid var(--brand); box-shadow: 0 0 0 1px var(--brand);
   cursor: pointer; font: inherit; white-space: nowrap;
-  font-size: 12px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--brand);
+  font-size: 11.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--brand);
   transition: box-shadow .15s, transform .1s; }
 .pswitch[hidden] { display: none; }
-.pswitch-head { display: none; }   /* desktop pointer layout only — see the media query below */
-.pswitch:active { transform: translateY(-50%) scale(.96); }
+.pswitch:active { transform: scale(.96); }
 .pswitch:focus-visible { box-shadow: 0 0 0 1px var(--brand), 0 0 0 5px color-mix(in srgb, var(--brand) 30%, transparent); }
 /* Hover INVERTS it: brand ground, ground-coloured text. The old treatment tinted the fill to brand 15% and
    ringed it with brand 20% — near enough the same colour that the two merged into one thick blurry halo. */
@@ -598,14 +597,9 @@ body.logo-inline .brand { align-self: flex-start; min-height: 41px; }
   .pbtn-start { width: 69px; height: 69px; }
   .qrimg { width: min(40vw, 30vh, 170px); }
 }
-/* Desktop/laptop: the modebar is absent; one header .pswitch opens the connection picker. Deployment arrows are
-   clickable because a mouse has no swipe gesture. A narrow desktop window still follows the pointer capability. */
+/* Desktop/laptop: deployment arrows are clickable because a mouse has no swipe gesture. A narrow desktop
+   window still follows the pointer capability. */
 @media (hover: hover) and (pointer: fine) {
-  .ppage .pswitch { display: none; }
-  .pswitch-head { display: inline-flex; position: static; top: auto; right: auto; transform: none;
-    padding: 6px 12px; font-size: 11.5px; }
-  .pswitch-head:active { transform: scale(.96); }
-  .who-row { flex-direction: column; gap: 12px; }
   .navarrow { pointer-events: auto; cursor: pointer; opacity: 1; animation: none; width: 44px; height: 44px; border-radius: 50%;
     align-items: center; justify-content: center; background: var(--panel); border: 1px solid var(--line); color: var(--brand);
     box-shadow: 0 2px 12px rgba(0, 0, 0, .16); transition: border-color .15s, box-shadow .15s, opacity .2s; }
