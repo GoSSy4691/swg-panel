@@ -83,16 +83,16 @@
   },
   "vkturnproxy": {
    "anton48/vk-turn-proxy-ios@main:quick_link.py": {
-    "date": "2026-09-06T13:02:00Z",
-    "sha": "f413e87aa2a8b0f29341a32ebcd015a352918195",
-    "url": "https://github.com/anton48/vk-turn-proxy-ios/commit/f413e87aa2a8b0f29341a32ebcd015a352918195"
+    "date": "2026-09-28T20:02:28Z",
+    "sha": "12454cbb3dc0621c6dd2a543ac7c991a7129ab03",
+    "url": "https://github.com/anton48/vk-turn-proxy-ios/commit/12454cbb3dc0621c6dd2a543ac7c991a7129ab03"
    }
   },
   "wdttplus": {
    "Ivan4537/WDTT-Plus@main:app/src/main/java/com/wdtt/plus/SettingsStore.kt": {
-    "date": "2026-09-11T12:45:55Z",
-    "sha": "b3935b947acd81d95107869c8f33507f3f5c1309",
-    "url": "https://github.com/Ivan4537/WDTT-Plus/commit/b3935b947acd81d95107869c8f33507f3f5c1309"
+    "date": "2026-09-29T07:52:29Z",
+    "sha": "ed8893a2a6a7088330c6ba712f0970651169f4c5",
+    "url": "https://github.com/Ivan4537/WDTT-Plus/commit/ed8893a2a6a7088330c6ba712f0970651169f4c5"
    }
   },
   "wgturn": {
@@ -122,6 +122,6 @@
    }
   }
  },
- "generated_at": 1790593097,
+ "generated_at": 1790678585,
  "schema": 1
 }
